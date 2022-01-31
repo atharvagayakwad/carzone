@@ -18,8 +18,16 @@ def home(request):
     # all cars
     all_cars = CarsModel.objects.order_by('-created_date')
 
+    # search fields
+    # this will give us all unique values and ignore the duplicates
+    model_search = CarsModel.objects.values_list('model', flat=True).distinct()
+    city_search = CarsModel.objects.values_list('city', flat=True).distinct()
+    year_search = CarsModel.objects.values_list('year', flat=True).distinct()
+    body_style_search = CarsModel.objects.values_list(
+        'body_style', flat=True).distinct()
+
     context = {"teams": teams,
-               'featured_cars': featured_cars, 'all_cars': all_cars}
+               'featured_cars': featured_cars, 'all_cars': all_cars, 'model_search': model_search, 'city_search': city_search, 'year_search': year_search, 'body_style_search': body_style_search}
     return render(request, 'pages/home.html', context)
 
 
