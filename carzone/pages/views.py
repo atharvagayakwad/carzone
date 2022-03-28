@@ -1,6 +1,9 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from cars.models import CarsModel
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from django.contrib import messages
 
 from pages.models import TeamsModel
 
@@ -42,4 +45,27 @@ def services(request):
 
 
 def contact(request):
+    if request.method == 'POST':
+        name = request.POST['name']
+        email = request.POST['email']
+        subject = request.POST['subject']
+        phone = request.POST['phone']
+        message = request.POST['message']
+
+        email_subject = f'You have a new message from Carzone Website regarding {subject}'
+        message_body = f"Name: {name}, Email: {email}, Phone: {phone}, Message: {message}"
+        admin_info = User.objects.get(is_superuser=True)
+        admin_email_id = admin_info.email
+
+        send_mail(
+            email_subject,
+            message_body,
+            'atharvag3011@gmail.com',
+            [admin_email_id],
+            fail_silently=False,
+        )
+        
+        messages.success(request,
+            'Thankyou for contacting us. We will get back to you shortly')
+        return redirect('contact')
     return render(request, 'pages/contact.html')

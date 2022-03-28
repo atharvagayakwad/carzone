@@ -28,12 +28,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_REDIRECT_URL = 'dashboard'
+
 
 # Application definition
 
 INSTALLED_APPS = [
     'pages.apps.PagesConfig',
     'cars.apps.CarsConfig',
+    'accounts.apps.AccountsConfig',
+    'contacts.apps.ContactsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,6 +46,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ckeditor',
     'django.contrib.humanize',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    # providers
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +145,47 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}
+
+SITE_ID = 1
+
+# SOCIALACCOUNT_PROVIDERS = \
+#     {'facebook':
+#         {'METHOD': 'js_sdk',
+#          'SCOPE': ['email', 'public_profile'],
+#          'FIELDS': [
+#              'id',
+#              'email',
+#              'name',
+#              'first_name',
+#              'last_name',
+#              'verified'],
+#          }
+#      }
+
+#email settings
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'atharvagayakwad95@gmail.com'
+DEFAULT_FROM_EMAIL = 'atharvagayakwad95@gmail.com'
+SERVER_EMAIL = 'atharvagayakwad95@gmail.com'
+EMAIL_HOST_PASSWORD = 'refyujemgbgngjbl'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SOCIALACCOUNT_PROVIDERS = \
+{ 'facebook':
+    { 'SCOPE': ['email', 'publish_stream','user_birthday'],
+      'AUTH_PARAMS': { 'auth_type': 'reauthenticate' },
+      'METHOD': 'js_sdk' ,
+      'LOCALE_FUNC': lambda request: 'en_US'}}

@@ -1,9 +1,11 @@
 from django.shortcuts import get_object_or_404, render
 
 from cars.models import CarsModel
-from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
+
+
 def cars(request):
     cars = CarsModel.objects.order_by('-created_date')
 
@@ -17,14 +19,17 @@ def cars(request):
     body_style_search = CarsModel.objects.values_list(
         'body_style', flat=True).distinct()
 
-    context = {'cars': paged_cars, 'model_search': model_search, 'city_search': city_search, 'year_search': year_search, 'body_style_search': body_style_search}
+    context = {'cars': paged_cars, 'model_search': model_search, 'city_search': city_search,
+               'year_search': year_search, 'body_style_search': body_style_search}
     return render(request, 'cars/cars.html', context)
 
-def car_detail(request,id):
-    single_car = get_object_or_404(CarsModel,pk=id)
 
-    context = {'single_car':single_car}
+def car_detail(request, id):
+    single_car = get_object_or_404(CarsModel, pk=id)
+
+    context = {'single_car': single_car}
     return render(request, 'cars/car_detail.html', context)
+
 
 def search(request):
     cars = CarsModel.objects.order_by('-created_date')
@@ -34,9 +39,10 @@ def search(request):
     year_search = CarsModel.objects.values_list('year', flat=True).distinct()
     body_style_search = CarsModel.objects.values_list(
         'body_style', flat=True).distinct()
-    transmission_search =CarsModel.objects.values_list('transmission', flat=True).distinct()
+    transmission_search = CarsModel.objects.values_list(
+        'transmission', flat=True).distinct()
 
-    # if we have 'keyword' in url then 
+    # if we have 'keyword' in url then
     if 'keyword' in request.GET:
         keyword = request.GET['keyword']
 
@@ -50,28 +56,32 @@ def search(request):
 
         # if model is not blank
         if model:
-            cars = cars.filter(model__iexact=model) # and match it will the exact value in database
+            # and match it will the exact value in database
+            cars = cars.filter(model__iexact=model)
 
     if 'city' in request.GET:
         city = request.GET['city']
 
         # if city is not blank
         if city:
-            cars = cars.filter(city__iexact=city) # and match it will the exact value in database
+            # and match it will the exact value in database
+            cars = cars.filter(city__iexact=city)
 
     if 'year' in request.GET:
         year = request.GET['year']
 
         # if year is not blank
         if year:
-            cars = cars.filter(year__iexact=year) # and match it will the exact value in database
-    
+            # and match it will the exact value in database
+            cars = cars.filter(year__iexact=year)
+
     if 'body_style' in request.GET:
         body_style = request.GET['body_style']
 
         # if body_style is not blank
         if body_style:
-            cars = cars.filter(body_style__iexact=body_style) # and match it will the exact value in database
+            # and match it will the exact value in database
+            cars = cars.filter(body_style__iexact=body_style)
 
     if 'min_price' in request.GET:
         min_price = request.GET['min_price']
@@ -80,5 +90,6 @@ def search(request):
         if max_price:
             cars = cars.filter(price__gte=min_price, price__lte=max_price)
 
-    context = {'cars': cars, 'model_search': model_search, 'city_search': city_search, 'year_search': year_search, 'body_style_search': body_style_search,'transmission_search':transmission_search}
-    return render(request, 'cars/search.html',context)
+    context = {'cars': cars, 'model_search': model_search, 'city_search': city_search, 'year_search': year_search,
+               'body_style_search': body_style_search, 'transmission_search': transmission_search}
+    return render(request, 'cars/search.html', context)
